@@ -28,11 +28,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     if(empty(trim($_POST["password"]))){ $password_err = "Please enter a password."; } elseif(strlen(trim($_POST["password"])) < 6){ $password_err = "Password must have at least 6 characters."; } else{ $password = trim($_POST["password"]); }
     
     if(empty($name_err) && empty($email_err) && empty($password_err) && empty($phone_err)){
-        $sql = "INSERT INTO users (fullname, email, password, role) VALUES (?, ?, ?, 'Citizen')";
+        $sql = "INSERT INTO users (fullname, email, phone, password, role) VALUES (?, ?, ?, ?, 'Citizen')";
         if($stmt = $conn->prepare($sql)){
-            $stmt->bind_param("sss", $param_name, $param_email, $param_password);
+            $stmt->bind_param("ssss", $param_name, $param_email, $param_phone, $param_password);
             $param_name = $name;
             $param_email = $email;
+            $param_phone = $phone;
             $param_password = password_hash($password, PASSWORD_DEFAULT);
             if($stmt->execute()){ header("location: login.php"); } else{ echo "Something went wrong."; }
             $stmt->close();

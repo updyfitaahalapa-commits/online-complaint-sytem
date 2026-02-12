@@ -14,17 +14,12 @@ $msg = "";
 // Handle Profile Update
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fullname = trim($_POST["fullname"]);
-    $email = trim($_POST["email"]); // Assuming we allow email updates (logic validation needed ideally)
-    $phone = trim($_POST["phone"]); // Added phone if it exists in DB (it was in register.php but not checked in schema yet, let's assume it might not be in schema, wait. register.php HAD logic for it but schema check needed. register.php didn't actually insert phone in the INSERT statement shown in previous turn view_file. Let's stick to name and email for now to be safe, or check schema. register.php INSERT was: INSERT INTO users (fullname, email, password, role) VALUES (?, ?, ?, 'Citizen'). So phone is NOT in DB. I will just do Name and Email.)
-
-    // Check schema quick? No, I will trust the register.php logic which IGNORED phone in insert. 
-    // Actually, I should probably add phone to schema later. For now, let's just update Name and Password?
-    // Let's stick to Name.
+    $phone = trim($_POST["phone"]);
 
     if(!empty($fullname)){
-        $sql = "UPDATE users SET fullname = ? WHERE id = ?";
+        $sql = "UPDATE users SET fullname = ?, phone = ? WHERE id = ?";
         if($stmt = $conn->prepare($sql)){
-            $stmt->bind_param("si", $fullname, $user_id);
+            $stmt->bind_param("ssi", $fullname, $phone, $user_id);
             if($stmt->execute()){
                 $_SESSION["fullname"] = $fullname; // Update session
                 $msg = '<div class="alert alert-success">Profile updated successfully!</div>';
@@ -37,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 // Fetch User Data
-$sql = "SELECT fullname, email, role, created_at FROM users WHERE id = ?";
+$sql = "SELECT fullname, email, phone, role, created_at FROM users WHERE id = ?";
 if($stmt = $conn->prepare($sql)){
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
@@ -88,6 +83,10 @@ if($stmt = $conn->prepare($sql)){
                                 <div class="mb-3">
                                     <label class="form-label">Full Name</label>
                                     <input type="text" name="fullname" class="form-control" value="<?php echo htmlspecialchars($user['fullname']); ?>" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="text" name="phone" class="form-control" value="<?php echo htmlspecialchars($user['phone']); ?>">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Email Address</label>

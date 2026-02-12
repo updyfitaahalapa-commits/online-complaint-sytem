@@ -14,6 +14,7 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `fullname` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
   `password` varchar(255) NOT NULL,
   `role` enum('Admin','Officer','Citizen') NOT NULL DEFAULT 'Citizen',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
